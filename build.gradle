@@ -1,29 +1,25 @@
 plugins {
-	id 'java-base'
+    id 'java-base'
     id 'maven-publish'
+    // Plugin này cần thiết để quản lý Architectury/Loom cho đa nền tảng
+    // Nếu bạn dùng template Architectury thì giữ, nếu tự build tay thì có thể bỏ qua nếu không lỗi
+    // id "architectury-plugin" version "3.4-SNAPSHOT" 
 }
 
-base {
-	archivesName = project.archives_base_name
-}
-version = project.mod_version
-group = project.maven_group
-
-def includeDep = true
-
+// Cấu hình chung cho tất cả các subprojects (common, fabric, neoforge, forge)
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(21) // Minecraft 1.21 dùng Java 21
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21) // Chuẩn cho 1.21+
 
-    // Cấu hình Encoding
+    // Cấu hình Encoding UTF-8 để không bị lỗi font tiếng Việt trong code
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
         options.release = 21
     }
     
-    // Khai báo repositories chung cho tất cả
+    // Khai báo repositories chung
     repositories {
         mavenLocal()
         mavenCentral()
@@ -39,63 +35,11 @@ subprojects {
         maven { url "https://maven.architectury.dev/" }
         maven { url "https://maven.terraformersmc.com/" }
     }
+    
+    // Cấu hình tên file output
+    base {
+        archivesName = "${rootProject.properties.archives_base_name}-${project.name}"
+    }
 }
 
-dependencies {
-	//to change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	//Cloth Config API
-	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
-
-    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
-}
-
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
-	}
-}
-
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
-	options.encoding = "UTF-8"
-}
-
-java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
-}
-
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			from components.java
-		}
-	}
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
-	}
-}
-
+// KHÔNG KHAI BÁO dependencies CỦA MOD TẠI ĐÂY (đã xóa đoạn dependencies cũ)
