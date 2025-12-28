@@ -1,44 +1,18 @@
-modLoader = "javafml"
-loaderVersion = "[4,)"
-license = "MIT"
-issueTrackerURL = "https://github.com/godkyo98/AFKFish/issues" 
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT"
+issueTrackerURL=""
 
 [[mods]]
-    # ID này BẮT BUỘC phải trùng với ID trong @Mod("afkfish") ở file Java
-    modId = "afkfish"
-    
-    # Version lấy từ file build.gradle
-    version = "${file.jarVersion}"
-    
-    # Tên hiển thị trong danh sách mod
-    displayName = "AFKFish"
-    
-    # Tên hiển thị khi update (thường để giống modId)
-    displayURL = "https://github.com/godkyo98/AFKFish"
-    
-    # Thông tin tác giả (Mình lấy theo package code cũ của bạn)
-    authors = "Kyo"
-    
-    # Mô tả mod (Dùng 3 dấu nháy đơn để viết nhiều dòng)
-    description = '''
-    Mod tự động câu cá (Autofish) hỗ trợ đa nền tảng.
-    Tự động kéo cần khi cá cắn câu.
-    '''
+modId="afkfish"
+version="${mod_version}"
+displayName="AFKFish"
+authors="Kyo"
+description='''
+Auto fish mod
+'''
 
-# --- Phần khai báo thư viện phụ thuộc (Dependencies) ---
-
-# 1. Phụ thuộc vào Minecraft
-[[dependencies.afkfish]]
-    modId = "minecraft"
-    type = "required"
-    versionRange = "[1.21,)" # Hỗ trợ từ 1.21 trở lên
-    ordering = "NONE"
-    side = "BOTH"
-
-# 2. Phụ thuộc vào NeoForge loader
-[[dependencies.afkfish]]
-    modId = "neoforge"
-    type = "required"
-    versionRange = "[21,)" # Phiên bản NeoForge cho 1.21 thường bắt đầu bằng 21
-    ordering = "NONE"
-    side = "BOTH"
+[[mixins]]
+config="afkfish.mixins.json" # Load mixin từ common
+[[mixins]]
+config="afkfish.neoforge.mixins.json" # Load mixin riêng của NeoForge

@@ -3,60 +3,35 @@ plugins {
     id 'net.neoforged.moddev'
 }
 
+version = project.mod_version
+group = project.maven_group
+
 neoForge {
-    version = neoforge_version
-    // Automatically enable neoforge AccessTransformers if the file exists
-    def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
-    if (at.exists()) {
-        accessTransformers.from(at.absolutePath)
-    }
-    parchment {
-        minecraftVersion = parchment_minecraft
-        mappingsVersion = parchment_version
-    }
+    version = project.neoforge_version // Cần thêm dòng này trong gradle.properties
+    
+    // Config chạy thử game
     runs {
-        configureEach {
-            systemProperty('neoforge.enabledGameTestNamespaces', mod_id)
-            ideName = "NeoForge ${it.name.capitalize()} (${project.path})" // Unify the run config names with fabric
-        }
         client {
             client()
-        }
-        data {
-            clientData()
-
-            // DataGen can be run by - "./gradlew :neoforge:runData" in Terminal.
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
         server {
             server()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            programArgument '--nogui'
         }
     }
+
     mods {
-        "${mod_id}" {
-            sourceSet sourceSets.main
+        "${project.mod_id}" {
+            sourceSet(sourceSets.main)
+            // QUAN TRỌNG: Nạp code từ common vào mod NeoForge
+            sourceSet(project(":common").sourceSets.main) 
         }
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-// Implement mcgradleconventions loader attribute
-def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
-['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
-    configurations.named("$variant") {
-        attributes {
-            attribute(loaderAttribute, 'neoforge')
-        }
-    }
-}
-sourceSets.configureEach {
-    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName, it.getTaskName(null, 'jarJar')].each { variant->
-        configurations.named("$variant") {
-            attributes {
-                attribute(loaderAttribute, 'neoforge')
-            }
-        }
-    }
+dependencies {
+    // Compile Common
+    implementation project(":common")
 }
