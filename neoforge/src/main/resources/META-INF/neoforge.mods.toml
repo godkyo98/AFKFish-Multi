@@ -4,15 +4,15 @@ license="MIT"
 issueTrackerURL=""
 
 [[mods]]
-modId="afkfish"
+modId="autofish"
 version="${mod_version}"
-displayName="AFKFish"
+displayName="autofish"
 authors="Kyo"
 description='''
 Auto fish mod
 '''
 
 [[mixins]]
-config="afkfish.mixins.json" # Load mixin từ common
+config="autofish.mixins.json" # Load mixin từ common
 [[mixins]]
-config="afkfish.neoforge.mixins.json" # Load mixin riêng của NeoForge
+config="autofish.neoforge.mixins.json" # Load mixin riêng của NeoForge

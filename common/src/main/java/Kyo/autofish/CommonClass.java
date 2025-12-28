@@ -23,9 +23,9 @@ public class CommonClass {
         // your own abstraction layer. You can learn more about this in our provided services class. In this example
         // we have an interface in the common code and use a loader specific implementation to delegate our call to
         // the platform specific approach.
-        if (Services.PLATFORM.isModLoaded("AFKFish")) {
+        if (Services.PLATFORM.isModLoaded("autofish")) {
 
-            Kyo.autofish.Constants.LOG.info("Hello to AFKFish");
+            Kyo.autofish.Constants.LOG.info("Hello to autofish");
         }
     }
 }

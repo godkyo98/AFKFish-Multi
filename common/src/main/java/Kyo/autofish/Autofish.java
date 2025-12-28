@@ -4,9 +4,9 @@ import Kyo.autofish.config.ConfigManager;
 import Kyo.autofish.monitor.FishMonitorMP;
 import Kyo.autofish.monitor.FishMonitorMPMotion;
 import Kyo.autofish.monitor.FishMonitorMPSound;
+import Kyo.autofish.scheduler.AutofishScheduler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.Item;
@@ -14,24 +14,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import Kyo.autofish.scheduler.AutofishScheduler;
-
 
 public class Autofish {
-    public static final String MOD_ID = "AFKFish";
-    public static final String MOD_NAME = "AFKFish";
+    public static final String MOD_ID = "autofish";
+    public static final String MOD_NAME = "Autofish";
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
-    private AutofishScheduler scheduler;
+
     // Singleton Instance
     private static final Autofish INSTANCE = new Autofish();
 
     private final Minecraft client;
     private ConfigManager configManager;
+    private AutofishScheduler scheduler;
     private FishMonitorMP fishMonitorMP;
 
     // Các biến trạng thái logic
-    private boolean hookExists = false;
-    private long hookRemovedAt = 0L;
     public long timeMillis = 0L;
 
     // Constructor private
@@ -45,22 +42,29 @@ public class Autofish {
 
     // Hàm khởi tạo (Gọi từ FabricModAutofish hoặc AutofishNeoForge)
     public void init() {
+        // 1. Khởi tạo Config
         this.configManager = new ConfigManager();
 
-        // Khởi tạo scheduler
+        // 2. Khởi tạo Scheduler
         this.scheduler = new AutofishScheduler();
 
+        // 3. Cài đặt bộ theo dõi mặc định
         setDetection();
-        LOG.info("[Autofish] Common logic initialized.");
+
+        LOG.info("[Autofish] Common logic initialized successfully.");
     }
 
     public ConfigManager getConfigManager() {
         return configManager;
     }
 
+    public AutofishScheduler getScheduler() {
+        return scheduler;
+    }
+
     // Cài đặt chế độ theo dõi dựa trên Config
     public void setDetection() {
-        if (Autofish.getConfig().isUseSoundDetection()) {
+        if (configManager.getConfig().isUseSoundDetection()) {
             fishMonitorMP = new FishMonitorMPSound();
         } else {
             fishMonitorMP = new FishMonitorMPMotion();
@@ -69,22 +73,23 @@ public class Autofish {
 
     // --- LOGIC CHÍNH ---
 
-    // Được gọi mỗi tick (Bạn cần gọi hàm này từ ClientTickEvent ở 2 loader)
+    // Được gọi mỗi tick (Phải gọi từ ClientTickEvent ở các loader)
     public void onTick() {
         if (client.player == null || client.level == null) return;
 
         // Cập nhật thời gian
         timeMillis++;
 
-        // Logic tự động recast, check inventory... sẽ đặt ở đây
-        // (Bạn có thể copy thêm logic từ code cũ vào đây nếu cần)
-    }
+        // Chạy Scheduler
+        if (scheduler != null) {
+            scheduler.tick(client);
+        }
+    } // <--- Dấu ngoặc này trước đây có thể bị thiếu gây lỗi
 
     // Xử lý Packet từ Mixin Network
     public void handlePacket(Packet<?> packet) {
-        if (configManager.getConfig().isAutofishEnabled() && fishMonitorMP != null) {
-            // Logic xử lý packet (Sound/Motion) delegating cho Monitor
-            // Tạm thời giả lập, bạn cần đảm bảo class FishMonitorMP có phương thức này
+        if (configManager != null && configManager.getConfig().isAutofishEnabled() && fishMonitorMP != null) {
+            // Logic xử lý packet (Bạn cần implement hàm này trong FishMonitorMP nếu chưa có)
             // fishMonitorMP.handlePacket(packet);
         }
     }
@@ -92,13 +97,12 @@ public class Autofish {
     // Xử lý Logic câu cá từ Mixin FishingHook
     public void tickFishingLogic(Entity owner, int nibble) {
         if (client.player != null && owner.getUUID().equals(client.player.getUUID())) {
-            // Logic phát hiện cá cắn câu dựa trên nibble (countdown)
-            // Nếu nibble > 0 và giảm dần -> Cá sắp cắn
-            // Code chi tiết tùy thuộc vào logic cũ của bạn
+            // Logic phát hiện cá cắn câu
+            // Ví dụ: Nếu nibble > 0 và giảm dần -> Cá sắp cắn
         }
     }
 
-    // Helper: Kiểm tra item
+    // Helper: Kiểm tra item trên tay
     public boolean isHoldingFishingRod() {
         return isItemFishingRod(getHeldItem().getItem());
     }
@@ -106,7 +110,7 @@ public class Autofish {
     private ItemStack getHeldItem() {
         if (client.player == null) return ItemStack.EMPTY;
 
-        if (!configManager.getConfig().isMultiRod()) {
+        if (configManager != null && !configManager.getConfig().isMultiRod()) {
             if (isItemFishingRod(client.player.getOffhandItem().getItem()))
                 return client.player.getOffhandItem();
         }
@@ -115,8 +119,5 @@ public class Autofish {
 
     private boolean isItemFishingRod(Item item) {
         return item == Items.FISHING_ROD || item instanceof FishingRodItem;
-    }
-
-    public void catchFish() {
     }
 }

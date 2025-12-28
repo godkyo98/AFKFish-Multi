@@ -1,16 +1,18 @@
 {
   "schemaVersion": 1,
-  "id": "afkfish",
+  "id": "autofish",
   "version": "${version}",
-  "name": "AFKFish",
+  "name": "Autofish",
   "description": "Auto fish mod",
-  "authors": ["Kyo"],
+  "authors": [
+    "Kyo"
+  ],
   "contact": {},
   "license": "MIT",
   "icon": "assets/autofish/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": [
+    "client": [
       "Kyo.autofish.FabricModAutofish"
     ],
     "modmenu": [
@@ -18,8 +20,8 @@
     ]
   },
   "mixins": [
-    "autofish.fabric.mixins.json",
-    "afkfish.mixins.json" 
+    "autofish.mixins.json",
+    "autofish.fabric.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",

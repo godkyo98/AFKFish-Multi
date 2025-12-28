@@ -1,12 +1,12 @@
 {
   "required": true,
-  "minVersion": "0.1",
+  "minVersion": "0.8",
   "package": "Kyo.autofish.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "MixinTitleScreen"
+  ],
   "client": [
-    "MixinFishHookEntity",
-    "MixinClientPlayNetworkHandler"
   ],
   "injectors": {
     "defaultRequire": 1
