@@ -18,7 +18,7 @@
     ]
   },
   "mixins": [
-    "autofish.mixins.json",
+    "autofish.fabric.mixins.json",
     "afkfish.mixins.json" 
   ],
   "depends": {

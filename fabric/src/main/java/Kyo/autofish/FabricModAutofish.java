@@ -26,6 +26,12 @@ public class FabricModAutofish implements ClientModInitializer {
     private ConfigManager configManager;
 
     @Override
+    public void onInitialize() {
+        // Gọi hàm init chung
+        Autofish.getInstance().init();
+    }
+
+    @Override
     public void onInitializeClient() {
 
         if (instance == null) instance = this;

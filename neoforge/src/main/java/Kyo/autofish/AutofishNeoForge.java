@@ -1,18 +1,20 @@
-package Kyo.autofish;
-
-
+import Kyo.autofish.Autofish;
+import Kyo.autofish.gui.AutofishScreenBuilder;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @Mod(afkfish)
-public class AutofishNeoForge {
-    public AutofishNeoForge(IEventBus modEventBus) {
-        // Đăng ký sự kiện FMLClientSetupEvent nếu cần init gì đó
-        modEventBus.addListener(this::onClientSetup);
-    }
+public AutofishNeoForge(IEventBus modEventBus, ModContainer modContainer) {
+    // Gọi hàm init chung
+    Autofish.getInstance().init();
 
-    private void onClientSetup(FMLClientSetupEvent event) {
-        // Gọi logic khởi tạo từ Common
-        Autofish.init(); 
-    }
+    // Đăng ký màn hình config
+    modContainer.registerExtensionPoint(IConfigScreenFactory.class, (container, parent) ->
+            AutofishScreenBuilder.buildScreen(Autofish.getInstance().getConfigManager(), parent)
+    );
+}
+
+void main() {
 }

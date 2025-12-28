@@ -5,11 +5,9 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
-// XÓA: import net.minecraft.class_2561; (Đây là tên cũ, không dùng cho 1.21.11)
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
-// XÓA: import Kyo.autofish.FabricModAutofish; (Gây lỗi bên NeoForge)
-import Kyo.autofish.config.ConfigManager; // Thêm dòng này
+import net.minecraft.client.gui.screens.Screen; // Mapping chuẩn: screens (có 's')
+import net.minecraft.network.chat.Component;   // Mapping chuẩn: Component (thay cho Text/class_2561)
+import Kyo.autofish.config.ConfigManager;
 import Kyo.autofish.config.Config;
 
 import java.util.function.Function;
@@ -21,24 +19,22 @@ public class AutofishScreenBuilder {
         else return Component.translatable("options.autofish.toggle.off");
     };
 
-    // SỬA ĐỔI: Thay tham số FabricModAutofish thành ConfigManager
+    // Nhận vào ConfigManager thay vì class của Fabric
     public static Screen buildScreen(ConfigManager configManager, Screen parentScreen) {
 
         Config defaults = new Config();
-        // Lấy config từ ConfigManager (đã được làm sạch ở bước trước)
         Config config = configManager.getConfig();
 
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parentScreen)
                 .setTitle(Component.translatable("options.autofish.title"))
                 .transparentBackground()
-                // QUAN TRỌNG: Thêm dòng này để lưu file khi bấm Save
                 .setSavingRunnable(() -> configManager.writeConfig(true));
 
         ConfigCategory configCat = builder.getOrCreateCategory(Component.translatable("options.autofish.general.title"));
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
-        // --- Các phần dưới thay modAutofish thành configManager hoặc config trực tiếp ---
+        // --- CÁC CONFIG ENTRY (Copy logic cũ nhưng dùng biến 'config') ---
 
         AbstractConfigListEntry<Boolean> toggleAutofish = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.toggle.title"), config.isAutofishEnabled())
                 .setDefaultValue(defaults.isAutofishEnabled())
@@ -47,9 +43,7 @@ public class AutofishScreenBuilder {
                         Component.translatable("options.autofish.toggle.tooltip_0"),
                         Component.translatable("options.autofish.toggle.tooltip_1")
                 )
-                .setSaveConsumer(newValue -> {
-                    config.setAutofishEnabled(newValue);
-                })
+                .setSaveConsumer(config::setAutofishEnabled)
                 .build();
 
         AbstractConfigListEntry<Boolean> toggleMultiRod = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.multirod.title"), config.isMultiRodEnabled())
@@ -59,89 +53,52 @@ public class AutofishScreenBuilder {
                         Component.translatable("options.autofish.multirod.tooltip_0"),
                         Component.translatable("options.autofish.multirod.tooltip_1")
                 )
-                .setSaveConsumer(newValue -> {
-                    config.setMultiRodEnabled(newValue);
-                })
+                .setSaveConsumer(config::setMultiRodEnabled)
                 .build();
+
+        // ... (Bạn làm tương tự cho các option còn lại: BreakProtection, PersistentMode...)
+        // Mẹo: Dùng method reference `config::set...` cho gọn code saveConsumer
 
         AbstractConfigListEntry<Boolean> toggleBreakProtection = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.protection.title"), config.isBreakProtectionEnabled())
                 .setDefaultValue(defaults.isBreakProtectionEnabled())
                 .setYesNoTextSupplier(yesNoTextSupplier)
-                .setTooltip(
-                        Component.translatable("options.autofish.protection.tooltip_0"),
-                        Component.translatable("options.autofish.protection.tooltip_1")
-                )
-                .setSaveConsumer(newValue -> {
-                    config.setBreakProtectionEnabled(newValue);
-                })
+                .setSaveConsumer(config::setBreakProtectionEnabled)
                 .build();
 
         AbstractConfigListEntry<Boolean> togglePersistentMode = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.persistent.title"), config.isPersistentModeEnabled())
                 .setDefaultValue(defaults.isPersistentModeEnabled())
                 .setYesNoTextSupplier(yesNoTextSupplier)
-                .setTooltip(
-                        Component.translatable("options.autofish.persistent.tooltip_0"),
-                        Component.translatable("options.autofish.persistent.tooltip_1")
-                )
-                .setSaveConsumer(newValue -> {
-                    config.setPersistentModeEnabled(newValue);
-                })
+                .setSaveConsumer(config::setPersistentModeEnabled)
                 .build();
 
         AbstractConfigListEntry<Boolean> toggleSoundDetection = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.sound.title"), config.isSoundDetectionEnabled())
                 .setDefaultValue(defaults.isSoundDetectionEnabled())
                 .setYesNoTextSupplier(yesNoTextSupplier)
-                .setTooltip(
-                        Component.translatable("options.autofish.sound.tooltip_0"),
-                        Component.translatable("options.autofish.sound.tooltip_1")
-                )
-                .setSaveConsumer(newValue -> {
-                    config.setSoundDetectionEnabled(newValue);
-                })
+                .setSaveConsumer(config::setSoundDetectionEnabled)
                 .build();
 
         AbstractConfigListEntry<Boolean> toggleForceMPDetection = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.force_mp.title"), config.isForceMPDetectionEnabled())
                 .setDefaultValue(defaults.isForceMPDetectionEnabled())
                 .setYesNoTextSupplier(yesNoTextSupplier)
-                .setTooltip(
-                        Component.translatable("options.autofish.force_mp.tooltip_0"),
-                        Component.translatable("options.autofish.force_mp.tooltip_1"),
-                        Component.translatable("options.autofish.force_mp.tooltip_2")
-                )
-                .setSaveConsumer(newValue -> {
-                    config.setForceMPDetectionEnabled(newValue);
-                })
+                .setSaveConsumer(config::setForceMPDetectionEnabled)
                 .build();
 
         AbstractConfigListEntry<Integer> recastDelaySlider = entryBuilder.startIntSlider(Component.translatable("options.autofish.recast_delay.title"), config.getRecastDelay(), 10, 400)
                 .setDefaultValue(defaults.getRecastDelay())
-                .setTooltip(
-                        Component.translatable("options.autofish.recast_delay.tooltip_0"),
-                        Component.translatable("options.autofish.recast_delay.tooltip_1")
-                )
-                .setSaveConsumer(newValue -> {
-                    config.setRecastDelay(newValue);
-                })
+                .setSaveConsumer(config::setRecastDelay)
                 .build();
 
         AbstractConfigListEntry<String> clearLagRegexField = entryBuilder.startStrField(Component.translatable("options.autofish.clear_regex.title"), config.getClearLagRegex())
                 .setDefaultValue(defaults.getClearLagRegex())
-                .setTooltip(
-                        Component.translatable("options.autofish.clear_regex.tooltip_0"),
-                        Component.translatable("options.autofish.clear_regex.tooltip_1"),
-                        Component.translatable("options.autofish.clear_regex.tooltip_2")
-                )
-                .setSaveConsumer(newValue -> {
-                    config.setClearLagRegex(newValue);
-                })
+                .setSaveConsumer(config::setClearLagRegex)
                 .build();
 
-
+        // --- ADD VÀO CATEGORY ---
         SubCategoryBuilder subCatBuilderBasic = entryBuilder.startSubCategory(Component.translatable("options.autofish.basic.title"));
         subCatBuilderBasic.add(toggleAutofish);
         subCatBuilderBasic.add(toggleMultiRod);
         subCatBuilderBasic.add(toggleBreakProtection);
-        subCatBuilderBasic.add((togglePersistentMode));
+        subCatBuilderBasic.add(togglePersistentMode);
         subCatBuilderBasic.setExpanded(true);
 
         SubCategoryBuilder subCatBuilderAdvanced = entryBuilder.startSubCategory(Component.translatable("options.autofish.advanced.title"));

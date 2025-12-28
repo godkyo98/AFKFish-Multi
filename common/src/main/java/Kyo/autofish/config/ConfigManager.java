@@ -2,10 +2,8 @@ package Kyo.autofish.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-// XÓA DÒNG NÀY: import net.fabricmc.loader.api.FabricLoader;
+import Kyo.autofish.platform.Services; // Gọi qua Service trung gian
 import org.apache.commons.io.FileUtils;
-// XÓA DÒNG NÀY: import Kyo.autofish.FabricModAutofish;
-import Kyo.autofish.platform.Services; // Thêm dòng này
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -20,11 +18,10 @@ public class ConfigManager {
     private final File configFile;
     private final Executor executor = Executors.newSingleThreadExecutor();
 
-    // Bỏ tham số FabricModAutofish vì Common không được biết về nó
     public ConfigManager() {
         this.gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
 
-        // SỬA ĐỔI QUAN TRỌNG: Lấy đường dẫn config qua Services (Platform Agnostic)
+        // CÁCH MỚI: Lấy đường dẫn config từ Service (không phụ thuộc Fabric/NeoForge)
         Path configDir = Services.PLATFORM.getConfigFolder();
         this.configFile = configDir.resolve("autofish.config").toFile();
 
