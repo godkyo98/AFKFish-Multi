@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "AFKfish",
+  "version": "${version}",
+  "name": "AFKfish",
+  "description": "Automatically reels in and recasts your fishing rod when you catch a fish.",
+  "authors": [
+    "Kyo"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/afkfish"
+  },
+
+  "icon": "assets/autofish/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "Kyo.autofish.FabricModAutofish"
+    ],
+    "modmenu": [
+      "Kyo.autofish.ModMenuApiAutofish"
+    ]
+  },
+  "mixins": [
+    "autofish.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.2",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
