@@ -2,49 +2,45 @@ package Kyo.autofish.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.fabricmc.loader.api.FabricLoader;
+// XÓA DÒNG NÀY: import net.fabricmc.loader.api.FabricLoader;
 import org.apache.commons.io.FileUtils;
-import Kyo.autofish.FabricModAutofish;
+// XÓA DÒNG NÀY: import Kyo.autofish.FabricModAutofish;
+import Kyo.autofish.platform.Services; // Thêm dòng này
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class ConfigManager {
 
     private Config config;
-
-    private FabricModAutofish Autofish;
     private final Gson gson;
     private final File configFile;
-
     private final Executor executor = Executors.newSingleThreadExecutor();
 
-    public ConfigManager(FabricModAutofish modAutofish) {
-        this.Autofish = modAutofish;
+    // Bỏ tham số FabricModAutofish vì Common không được biết về nó
+    public ConfigManager() {
         this.gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-        this.configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), "autofish.config");
-        //run synchronously on first run so our options are available for the Autofish instance
+
+        // SỬA ĐỔI QUAN TRỌNG: Lấy đường dẫn config qua Services (Platform Agnostic)
+        Path configDir = Services.PLATFORM.getConfigFolder();
+        this.configFile = configDir.resolve("autofish.config").toFile();
+
         readConfig(false);
     }
 
     public void readConfig(boolean async) {
-
         Runnable task = () -> {
             try {
-                //read if exists
                 if (configFile.exists()) {
                     String fileContents = FileUtils.readFileToString(configFile, Charset.defaultCharset());
                     config = gson.fromJson(fileContents, Config.class);
-
-                    //If there were any invalid options, write the fixed config
                     if (config.enforceConstraints()) writeConfig(true);
-
-                } else { //write new if no config file exists
+                } else {
                     writeNewConfig();
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
                 writeNewConfig();

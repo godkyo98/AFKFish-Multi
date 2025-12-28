@@ -2,34 +2,54 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'multiloader-common'
-    // Dùng Fabric Loom cho Common là chuẩn nhất để các loader khác đều đọc được
     id 'net.fabricmc.fabric-loom'
 }
 
-// Cấu hình Loom (bắt buộc phải có mappings dù là rỗng cho 1.21.11)
 loom {
-    // Tắt split môi trường vì common dùng chung
     splitEnvironmentSourceSets()
 }
 
 dependencies {
-    // Minecraft Core
+    // Minecraft & Mappings
     minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered {} // Mappings rỗng cho 1.21.11
 
-    // Mappings rỗng để đánh lừa Loom (vì 1.21.11 không cần map nhưng Loom vẫn check)
-    mappings loom.layered {}
-
-    // Các thư viện chung
+    // Dependencies
     implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-
-    // Cloth Config
     implementation "me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}"
 }
 
-// Cấu hình task Jar để không bị trùng tên với các loader khác
-tasks.named("jar") {
-    archiveClassifier = "dev"
+base {
+    archivesName = "${mod_id}-common-${minecraft_version}"
 }
 
-// Nếu bạn có file mixin trong common, khai báo để refmap hoạt động
-sourceSets.main.resources.srcDir 'src/main/resources'
+configurations {
+    // --- 1. Cấu hình Source Code (Fix lỗi Javadoc) ---
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+
+    // --- 2. Cấu hình Compiled Jar (Fix lỗi Resolve Project) ---
+    rawJar {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    // Xuất code Java và Resource để module con dùng cho Javadoc/Dev
+    if (file('src/main/java').exists()) {
+        commonJava file('src/main/java')
+    }
+    if (file('src/main/resources').exists()) {
+        commonResources file('src/main/resources')
+    }
+
+    // Xuất file Jar đã compile để chạy game
+    rawJar jar
+}

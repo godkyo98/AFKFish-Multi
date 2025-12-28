@@ -7,7 +7,7 @@ net.neoforged.fml.startup.Client
 --assetIndex
 29
 --assetsDir
-C:\\Users\\Kyo\\Documents\\AFKFish\\.gradle\\caches\\neoformruntime\\assets
+"C:\\Users\\Kyo\\Documents\\AFKFish Multi\\.gradle\\caches\\neoformruntime\\assets"
 --fml.mcVersion
 1.21.11
 --fml.neoForgeVersion

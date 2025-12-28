@@ -1,5 +1,5 @@
 package Kyo.autofish.platform.services;
-
+import java.nio.file.Path;
 public interface IPlatformHelper {
 
     /**
@@ -23,7 +23,7 @@ public interface IPlatformHelper {
      * @return True if in a development environment, false otherwise.
      */
     boolean isDevelopmentEnvironment();
-
+    Path getConfigFolder();
     /**
      * Gets the name of the environment type as a string.
      *

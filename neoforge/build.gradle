@@ -8,7 +8,7 @@ group = project.maven_group
 
 neoForge {
     version = project.neoforge_version // Cần thêm dòng này trong gradle.properties
-    
+
     // Config chạy thử game
     runs {
         client {
@@ -25,13 +25,12 @@ neoForge {
     mods {
         "${project.mod_id}" {
             sourceSet(sourceSets.main)
-            // QUAN TRỌNG: Nạp code từ common vào mod NeoForge
-            sourceSet(project(":common").sourceSets.main) 
+            sourceSet(project(":common").sourceSets.main)
         }
     }
 }
 
 dependencies {
     // Compile Common
-    implementation project(":common")
+    implementation project(path: ":common", configuration: "rawJar")
 }
