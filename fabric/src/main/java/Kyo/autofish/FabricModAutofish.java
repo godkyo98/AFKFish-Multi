@@ -3,9 +3,11 @@ package Kyo.autofish;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.class_304;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.world.entity.Entity;
 import org.lwjgl.glfw.GLFW;
@@ -20,7 +22,7 @@ public class FabricModAutofish implements ClientModInitializer {
     private static FabricModAutofish instance;
     private Autofish autofish;
     private AutofishScheduler scheduler;
-    private KeyMapping autofishGuiKey;
+    private class_304 autofishGuiKey;
     private ConfigManager configManager;
 
     @Override
@@ -52,7 +54,7 @@ public class FabricModAutofish implements ClientModInitializer {
     /**
      * Mixin callback for Sound and EntityVelocity packets (multiplayer detection)
      */
-    public void handlePacket(Packet<?> packet) {
+    public void handlePacket(ClientboundSoundPacket packet) {
         autofish.handlePacket(packet);
     }
 

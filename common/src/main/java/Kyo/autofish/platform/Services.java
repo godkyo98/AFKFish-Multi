@@ -1,7 +1,7 @@
-package com.example.examplemod.platform;
+package Kyo.autofish.platform;
 
-import com.example.examplemod.Constants;
-import com.example.examplemod.platform.services.IPlatformHelper;
+import Kyo.autofish.Constants;
+import Kyo.autofish.platform.services.IPlatformHelper;
 
 import java.util.ServiceLoader;
 
