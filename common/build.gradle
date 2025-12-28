@@ -4,8 +4,6 @@ plugins {
 }
 
 neoForge {
-    // Sử dụng phiên bản NeoForm đã khai báo
-    neoFormVersion = 1.21.11-20251209.172050
 
     // Tự động bật AccessTransformers nếu có file
     def at = file('src/main/resources/META-INF/accesstransformer.cfg')

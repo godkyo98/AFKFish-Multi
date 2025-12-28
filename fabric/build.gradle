@@ -7,30 +7,30 @@ version = project.mod_version
 group = project.maven_group
 
 dependencies {
+    // Minecraft 1.21.11 Unobfuscated
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    
-    // Vì 1.21.11+ không còn obfuscation, dùng mapping này
-    mappings loom.officialMojangMappings()
-    
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    
-    // ModMenu và Cloth Config (nếu dùng)
-    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+
+    // Fabric Loader & API (Dùng implementation)
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // ModMenu
+    implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+    // Cloth Config (Đã sửa từ modApi -> implementation)
+    implementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
 
-    // QUAN TRỌNG: Dòng này giúp Fabric nhận code từ thư mục Common
+    // Common Project
     implementation project(":common")
 }
 
 loom {
-    // Tự động sao chép file access wideners nếu có
     if (project(":common").file("src/main/resources/afkfish.accesswidener").exists()) {
         accessWidenerPath = project(":common").file("src/main/resources/afkfish.accesswidener")
     }
-    
+
     runs {
         client {
             client()
