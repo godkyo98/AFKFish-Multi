@@ -32,7 +32,6 @@ neoForge {
 }
 
 dependencies {
-     api(fg.deobf("me.shedaniel.cloth:cloth-config-forge:ABC"))
     // Compile Common
     implementation project(":common")
 }

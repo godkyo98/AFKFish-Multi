@@ -9,6 +9,7 @@ group = project.maven_group
 dependencies {
     // Minecraft 1.21.11 Unobfuscated
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.layered {}
 
     // Fabric Loader & API (Dùng implementation)
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
