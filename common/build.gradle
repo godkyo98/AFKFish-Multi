@@ -4,16 +4,21 @@ plugins {
 }
 
 neoForge {
-    neoFormVersion = neo_form_version
-    // Automatically enable AccessTransformers if the file exists
+    // Sử dụng phiên bản NeoForm đã khai báo
+    neoFormVersion = 1.21.11-20251209.172050
+
+    // Tự động bật AccessTransformers nếu có file
     def at = file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
         accessTransformers.from(at.absolutePath)
     }
-    parchment {
-        minecraftVersion = parchment_minecraft
-        mappingsVersion = parchment_version
-    }
+
+    // TẠM THỜI TẮT PARCHMENT (Comment lại đoạn này)
+    // Vì 1.21.11 chưa có mapping Parchment và cũng không cần thiết do đã Unobfuscated
+    // parchment {
+    //     minecraftVersion = parchment_minecraft
+    //     mappingsVersion = parchment_version
+    // }
 }
 
 dependencies {

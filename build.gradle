@@ -1,6 +1,8 @@
 plugins {
     id 'java-base'
     id 'maven-publish'
+    id "net.neoforged.moddev" version "1.0.23" apply false
+    id "net.fabricmc.fabric-loom" version "1.14-SNAPSHOT" apply false
     // Plugin này cần thiết để quản lý Architectury/Loom cho đa nền tảng
     // Nếu bạn dùng template Architectury thì giữ, nếu tự build tay thì có thể bỏ qua nếu không lỗi
     // id "architectury-plugin" version "3.4-SNAPSHOT" 

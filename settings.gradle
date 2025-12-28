@@ -1,20 +1,21 @@
 pluginManagement {
     repositories {
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
+        mavenLocal()
+        mavenCentral()
         gradlePluginPortal()
+        maven { url = "https://maven.fabricmc.net/" }
+        maven { url = "https://maven.neoforged.net/releases" } // <-- Quan trọng: Kho chứa plugin NeoForge
+        maven { url = "https://maven.architectury.dev/" }
+        maven { url = "https://maven.terraformersmc.com/" }
     }
 }
+
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
 }
 
-// Sửa tên dự án tại đây
 rootProject.name = 'AFKFish-Multi'
 
-include('common')
-include('fabric')
-include('neoforge')
-include('forge')
+include 'common'
+include 'fabric'
+include 'neoforge'
