@@ -1,4 +1,4 @@
-package com.example.examplemod.platform.services;
+package Kyo.autofish.platform.services;
 
 public interface IPlatformHelper {
 
